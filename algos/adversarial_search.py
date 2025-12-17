@@ -217,15 +217,22 @@ def minimax_search(game: Connect4Env,
                    eval_fn: Optional[Callable] = None) -> Tuple[int, PerformanceTracker]:
     if eval_fn is None:
         eval_fn = evaluate_board
-    
+
+    original_board = game.board.copy()
+    original_player = game.current_player
+
     tracker = PerformanceTracker()
     tracker.start_timer()
     
     player = game.current_player
-    value, move = minimax(game, 0, max_depth, player, eval_fn, tracker)
+    env_copy = game.copy()
+    value, move = minimax(env_copy, 0, max_depth, player, eval_fn, tracker)
     
     tracker.stop_timer()
-    
+
+    assert np.array_equal(game.board, original_board)
+    assert game.current_player == original_player
+
     return (move, tracker)
 
 
@@ -234,13 +241,20 @@ def alphabeta_search(game: Connect4Env,
                      eval_fn: Optional[Callable] = None) -> Tuple[int, PerformanceTracker]:
     if eval_fn is None:
         eval_fn = evaluate_board
-    
+
+    original_board = game.board.copy()
+    original_player = game.current_player
+
     tracker = PerformanceTracker()
     tracker.start_timer()
     
     player = game.current_player
-    value, move = alphabeta(game, 0, max_depth, player, float('-inf'), float('inf'), eval_fn, tracker)
+    env_copy = game.copy()
+    value, move = alphabeta(env_copy, 0, max_depth, player, float('-inf'), float('inf'), eval_fn, tracker)
     
     tracker.stop_timer()
-    
+
+    assert np.array_equal(game.board, original_board)
+    assert game.current_player == original_player
+
     return (move, tracker)
